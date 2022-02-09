@@ -1,0 +1,28 @@
+parameters:
+- name: application
+  type: string
+- name: domain
+  type: string
+
+stages:
+- stage:
+  jobs:
+  - job:
+    pool:
+      vmImage: ubuntu-latest
+    steps:
+    - task: azureloadtest@1
+      inputs:
+        azureSubscription: <connection>
+        loadTestConfigFile: assets/azure-load-test/${{ parameters.application }}.yaml
+        loadTestResource: <resource>
+        resourceGroup: <group>
+        env: |
+          [
+            {
+              "name": "DOMAIN",
+              "value": "${{ parameters.domain }}"
+            }
+          ]
+    - publish: $(system.defaultworkingdirectory)/loadTest # case-sensitive
+      artifact: results

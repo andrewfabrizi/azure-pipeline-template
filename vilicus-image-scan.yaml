@@ -1,0 +1,19 @@
+parameters:
+- name: image
+  type: string
+
+steps:
+- script: |
+    export IMAGE=localhost:5000/image:tag
+    docker image tag ${{ parameters.image }} $IMAGE
+    export TEMPLATE=/opt/vilicus/contrib/sarif.tpl
+    export OUTPUT=/artifacts/result.sarif
+    wget -O run-job.sh https://raw.githubusercontent.com/edersonbrilhante/vilicus/main/scripts/run-job.sh
+    chmod +x ./run-job.sh
+    ./run-job.sh
+# - publish: $(system.defaultworkingdirectory)/artifacts/result.sarif # bug
+#   artifact: CodeAnalysisLogs # case-sensitive
+- task: publishbuildartifacts@1
+  inputs:
+    pathToPublish: $(system.defaultworkingdirectory)/artifacts/result.sarif
+    artifactName: CodeAnalysisLogs # case-sensitive

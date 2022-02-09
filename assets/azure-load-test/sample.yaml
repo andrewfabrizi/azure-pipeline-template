@@ -1,0 +1,7 @@
+version: v0.1
+testName: sample
+testPlan: sample.jmx
+engineInstances: 1
+failureCriteria:
+  - avg(response_time_ms) > 300
+  - percentage(error) > 50
